@@ -29,7 +29,7 @@ class Player():
 
     def draw(self):
         arcade.draw_texture_rectangle(self.center.x, self.center.y, self.texture.width, self.texture.height, self.texture, self.angle, 255)
-
+        arcade.draw_rectangle_filled(self.center.x, self.center.y + 200, 150, 15, arcade.color.GREEN)
     def advance(self):
         self.center.y += 0
         self.center.x += 0
