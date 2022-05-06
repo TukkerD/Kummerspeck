@@ -10,7 +10,6 @@ HEALTH_NUMBER_OFFSET_X = -10
 HEALTH_NUMBER_OFFSET_Y = -25
 
 
-
 class Point:
     def __init__(self):
         self.x = 0.0
@@ -18,11 +17,8 @@ class Point:
 
 
 class Player():
-    def __init__(self, max_health):
+    def __init__(self):
         super().__init__()
-
-        self.max_health = max_health
-        self.cur_health = max_health
 
         self.center = Point()
         self.center.y = SCREEN_HEIGHT / 2
@@ -37,8 +33,6 @@ class Player():
     def advance(self):
         self.center.y += 0
         self.center.x += 0
-
-
 
 
 class Enemy():
