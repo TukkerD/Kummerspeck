@@ -26,11 +26,16 @@ class Player():
         self.angle = 0
         self.image = WIZARD
         self.texture = arcade.load_texture(self.image, flipped_horizontally=True)
+        self.healthBarSize = 150
+        self.lifeMax = 150
+        self.life = 150
 
     def draw(self):
         arcade.draw_texture_rectangle(self.center.x, self.center.y, self.texture.width, self.texture.height, self.texture, self.angle, 255)
-        arcade.draw_rectangle_filled(self.center.x, self.center.y + 200, 150, 15, arcade.color.RED)
-        arcade.draw_rectangle_filled(self.center.x, self.center.y + 200, 100, 15, arcade.color.GREEN)
+        arcade.draw_rectangle_filled(self.center.x, self.center.y + 200, self.healthBarSize, 15, arcade.color.RED)
+        #Just to illustrate
+        self.life -= 1
+        arcade.draw_rectangle_filled(self.center.x, self.center.y + 200, ((self.life/self.lifeMax) * self.healthBarSize), 15, arcade.color.GREEN)
     def advance(self):
         self.center.y += 0
         self.center.x += 0
