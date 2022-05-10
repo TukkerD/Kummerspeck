@@ -29,7 +29,8 @@ class Player():
 
     def draw(self):
         arcade.draw_texture_rectangle(self.center.x, self.center.y, self.texture.width, self.texture.height, self.texture, self.angle, 255)
-        arcade.draw_rectangle_filled(self.center.x, self.center.y + 200, 150, 15, arcade.color.GREEN)
+        arcade.draw_rectangle_filled(self.center.x, self.center.y + 200, 150, 15, arcade.color.RED)
+        arcade.draw_rectangle_filled(self.center.x, self.center.y + 200, 100, 15, arcade.color.GREEN)
     def advance(self):
         self.center.y += 0
         self.center.x += 0
@@ -52,6 +53,45 @@ class Enemy():
         self.center.y += 0
         self.center.x += 0
 
+class Equation():
+    def __init__(self):
+        self.center = Point()
+        self.center.y = SCREEN_HEIGHT/2
+        self.center.x = SCREEN_WIDTH/2
+        self.list = []
+        #Highest number that appears per equation
+        self.maxNum = 3
+        #smallest number that appears in equation.
+        self.min = 1
+    def __init__(self, max, min, x, y):
+        self.center = Point()
+        self.center.y = y
+        self.center.x = x
+        self.maxNum = max
+        self.min = min
+    def draw(self):
+        arcade.draw_text("Equations", self.center.x, self. center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)
+
+class EquationList():
+    def __init__(self):
+        self.center = Point()
+        self.center.y = SCREEN_HEIGHT/2
+        self.center.x = SCREEN_WIDTH/2
+        self.maxEquations = 3
+        self.offset = 0
+        self.max = 3
+        self.min = 1
+        self.list = []
+    def addEquation(self):
+        i = 0
+        while i < self.maxEquations:
+            self.offset += 30
+            newEquation = Equation(self.max, self.min, (self.center.x - self.offset), self.center.y)
+            self.list.append(newEquation)
+    def draw(self):
+        for x in self.list():
+            x.draw()
+
 
 class Game(arcade.Window):
     def __init__(self, width, height):
@@ -60,12 +100,15 @@ class Game(arcade.Window):
         self.player = Player()
         self.enemy = Enemy()
         self.held_keys = set()
+        self.equations = EquationList()
+        #self.equations.addEquation()
 
     def on_draw(self):
         arcade.start_render()
         arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
         self.player.draw()
         self.enemy.draw()
+        #self.equations.draw()
 
     def update(self, delta_time):
         self.check_keys()
