@@ -96,6 +96,14 @@ class EquationList():
     def draw(self):
         for x in self.list():
             x.draw()
+class Menu():
+    def __init__(self):
+        self.center = Point()
+        self.center.y = 125
+        self.center.x = SCREEN_WIDTH/2
+    def draw(self):
+        arcade.draw_rectangle_filled(self.center.x, self.center.y, SCREEN_WIDTH, 250, arcade.color.BLACK)
+        arcade.draw_text("Menu", self.center.x, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)
 
 
 class Game(arcade.Window):
@@ -104,6 +112,7 @@ class Game(arcade.Window):
         self.background = arcade.load_texture(BACKGROUND_IMAGE)
         self.player = Player()
         self.enemy = Enemy()
+        self.menu = Menu()
         self.held_keys = set()
         self.equations = EquationList()
         #self.equations.addEquation()
@@ -113,6 +122,7 @@ class Game(arcade.Window):
         arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
         self.player.draw()
         self.enemy.draw()
+        self.menu.draw()
         #self.equations.draw()
 
     def update(self, delta_time):
