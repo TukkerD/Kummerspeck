@@ -26,20 +26,32 @@ class Player():
         self.angle = 0
         self.image = WIZARD
         self.texture = arcade.load_texture(self.image, flipped_horizontally=True)
-        self.healthBarSize = 150
+        self.healthBarStart = SCREEN_WIDTH - 100
         self.lifeMax = 150
         self.life = 150
+        # Change the rate that health is lost
+        self.lifeRateChange = -.2
 
     def draw(self):
+        # Wizard
         arcade.draw_texture_rectangle(self.center.x, self.center.y, self.texture.width, self.texture.height, self.texture, self.angle, 255)
-        arcade.draw_rectangle_filled(self.center.x, self.center.y + 200, self.healthBarSize, 15, arcade.color.RED)
-        #Just to illustrate
-        self.life -= 1
-        arcade.draw_rectangle_filled(self.center.x, self.center.y + 200, ((self.life/self.lifeMax) * self.healthBarSize), 15, arcade.color.GREEN)
+        # Health bars
+        arcade.draw_rectangle_filled(self.center.x, self.center.y + 200, self.lifeMax, 15, arcade.color.RED)
+        arcade.draw_rectangle_filled(self.healthBarStart, self.center.y + 200, self.life, 15, arcade.color.GREEN)
+
     def advance(self):
         self.center.y += 0
         self.center.x += 0
 
+    def update_life(self):
+        # Stop the health bar at 0 to avoid it going into the negative integers.       
+        if self.life <= 0:
+            self.life = 0
+            self.lifeRateChange = 0
+        elif self.life > 0:
+            # += to drain right to left, -= to drain left to right
+            self.healthBarStart += (self.lifeRateChange / 2)
+            self.life += self.lifeRateChange 
 
 class Enemy():
     def __init__(self):
@@ -127,6 +139,8 @@ class Game(arcade.Window):
 
     def update(self, delta_time):
         self.check_keys()
+        # Call update_health here for testing/display purposes, will need to it move to appropriate function later.
+        self.player.update_life()
         #self.check_collisions()
 
     def check_keys(self):
@@ -141,6 +155,15 @@ class Game(arcade.Window):
 
         if arcade.key.DOWN in self.held_keys or arcade.key.S in self.held_keys:
             print("left")
+
+    '''
+    Added the key press functions for testing functions outside of the update function
+    just remove the comment tags and place your function in check_keys
+    '''
+    #def on_key_press(self, key, modifiers):
+        #self.held_keys.add(key)
+    #def on_key_release(self, key, modifiers):
+        #self.held_keys.remove(key)
 
 
 WINDOW = Game(SCREEN_WIDTH, SCREEN_HEIGHT)
