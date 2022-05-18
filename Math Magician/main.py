@@ -1,6 +1,7 @@
 import random
 import arcade
 from constants import *
+import arcade.gui
 
 HEALTHBAR_WIDTH = 25
 HEALTHBAR_HEIGHT = 3
@@ -44,14 +45,14 @@ class Player():
         self.center.x += 0
 
     def update_life(self):
-        # Stop the health bar at 0 to avoid it going into the negative integers.       
+        # Stop the health bar at 0 to avoid it going into the negative integers.
         if self.life <= 0:
             self.life = 0
             self.lifeRateChange = 0
         elif self.life > 0:
             # += to drain right to left, -= to drain left to right
             self.healthBarStart += (self.lifeRateChange / 2)
-            self.life += self.lifeRateChange 
+            self.life += self.lifeRateChange
 
 class Enemy():
     def __init__(self):
@@ -127,6 +128,7 @@ class EquationList():
     def draw(self):
         for x in self.list():
             x.draw()
+
 class Menu():
     def __init__(self):
         self.center = Point()
@@ -134,7 +136,7 @@ class Menu():
         self.center.x = SCREEN_WIDTH/2
     def draw(self):
         arcade.draw_rectangle_filled(self.center.x, self.center.y, SCREEN_WIDTH, 250, arcade.color.BLACK)
-        arcade.draw_text("Menu", self.center.x, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)
+        #arcade.draw_text("Menu", self.center.x, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)
 
 
 class Game(arcade.Window):
@@ -148,12 +150,27 @@ class Game(arcade.Window):
         self.equations = EquationList()
         #self.equations.addEquation()
 
+        # Menu Button
+        self.uimanager = arcade.gui.UIManager()
+        self.uimanager.enable()
+        start_button = arcade.gui.UIFlatButton(text="Menu",
+                                               width=200)
+        self.uimanager.add(
+            arcade.gui.UIAnchorWidget(
+                anchor_x="center_x",
+                anchor_y="bottom",
+                align_y=150,
+                child=start_button)
+        )
+
     def on_draw(self):
         arcade.start_render()
         arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
         self.player.draw()
         self.enemy.draw()
         self.menu.draw()
+        # Render button
+        self.uimanager.draw()
         #self.equations.draw()
 
     def update(self, delta_time):
