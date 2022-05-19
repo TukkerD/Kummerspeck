@@ -54,6 +54,7 @@ class Player():
             self.healthBarStart += (self.lifeRateChange / 2)
             self.life += self.lifeRateChange
 
+
 class Enemy():
     def __init__(self):
         super().__init__()
@@ -100,14 +101,17 @@ class Equation():
         self.maxNum = 3
         #smallest number that appears in equation.
         self.min = 1
+
     def __init__(self, max, min, x, y):
         self.center = Point()
         self.center.y = y
         self.center.x = x
         self.maxNum = max
         self.min = min
+
     def draw(self):
         arcade.draw_text("Equations", self.center.x, self. center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)
+
 
 class EquationList():
     def __init__(self):
@@ -119,24 +123,28 @@ class EquationList():
         self.max = 3
         self.min = 1
         self.list = []
+
     def addEquation(self):
         i = 0
         while i < self.maxEquations:
             self.offset += 30
             newEquation = Equation(self.max, self.min, (self.center.x - self.offset), self.center.y)
             self.list.append(newEquation)
+
     def draw(self):
         for x in self.list():
             x.draw()
+
 
 class Menu():
     def __init__(self):
         self.center = Point()
         self.center.y = 125
         self.center.x = SCREEN_WIDTH/2
+
     def draw(self):
         arcade.draw_rectangle_filled(self.center.x, self.center.y, SCREEN_WIDTH, 250, arcade.color.BLACK)
-        #arcade.draw_text("Menu", self.center.x, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)
+        #arcade.draw_text("menu", self.center.x, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)
 
 
 class Game(arcade.Window):
