@@ -1,7 +1,10 @@
 import random
 import arcade
+import schedule
+from sympy import false, true
 from constants import *
 import arcade.gui
+import threading
 
 HEALTHBAR_WIDTH = 25
 HEALTHBAR_HEIGHT = 3
@@ -23,15 +26,17 @@ class Player():
 
         self.center = Point()
         self.center.y = SCREEN_HEIGHT / 2
-        self.center.x = SCREEN_WIDTH - 100
+        self.center.x = SCREEN_WIDTH/8
         self.angle = 0
         self.image = WIZARD
-        self.texture = arcade.load_texture(self.image, flipped_horizontally=True)
-        self.healthBarStart = SCREEN_WIDTH - 100
+        self.texture = arcade.load_texture(self.image)
+        self.healthBarStart = SCREEN_WIDTH/8
         self.lifeMax = 150
         self.life = 150
+        self.damage = 10
         # Change the rate that health is lost
-        self.lifeRateChange = -.2
+        self.lifeRateChange = 0
+       
 
     def draw(self):
         # Wizard
@@ -39,6 +44,15 @@ class Player():
         # Health bars
         arcade.draw_rectangle_filled(self.center.x, self.center.y + 200, self.lifeMax, 15, arcade.color.RED)
         arcade.draw_rectangle_filled(self.healthBarStart, self.center.y + 200, self.life, 15, arcade.color.GREEN)
+    def attack(self):
+        return self.damage
+    def hurt(self, incomingDamage):
+        timeEnd = time.time() + .25
+
+        while time.time() < timeEnd:
+            self.lifeRateChange = incomingDamage
+        self.lifeRateChange = 0
+
 
     def advance(self):
         self.center.y += 0
@@ -50,6 +64,7 @@ class Player():
             self.life = 0
             self.lifeRateChange = 0
         elif self.life > 0:
+            
             # += to drain right to left, -= to drain left to right
             self.healthBarStart += (self.lifeRateChange / 2)
             self.life += self.lifeRateChange
@@ -60,15 +75,16 @@ class Enemy():
         super().__init__()
         self.center = Point()
         self.center.y = SCREEN_HEIGHT/2
-        self.center.x = SCREEN_WIDTH/8
+        self.center.x = SCREEN_WIDTH - 200
         self.angle = 0
         self.image = MINOTAUR
-        self.texture = arcade.load_texture(self.image, flipped_horizontally=True)
-        self.healthBarStart = SCREEN_WIDTH/8
+        self.texture = arcade.load_texture(self.image)
+        self.healthBarStart = SCREEN_WIDTH - 200
         self.lifeMax = 150
         self.life = 150
+        self.damage = 5
         # Change the rate that health is lost
-        self.lifeRateChange = -.2
+        
 
     def draw(self):
         arcade.draw_texture_rectangle(self.center.x, self.center.y, self.texture.width, self.texture.height, self.texture, self.angle, 255)
@@ -80,15 +96,25 @@ class Enemy():
         self.center.y += 0
         self.center.x += 0
 
+    def attack(self):
+        return self.damage
+    def hurt(self, incomingDamage):
+        timeEnd = time.time() + .25
+
+        while time.time() < timeEnd:
+            self.lifeRateChange = incomingDamage
+        self.lifeRateChange = 0
+
     def update_life(self):
         # Stop the health bar at 0 to avoid it going into the negative integers.
         if self.life <= 0:
             self.life = 0
             self.lifeRateChange = 0
-        elif self.life > 0:
+        #elif self.life > 0:
             # += to drain right to left, -= to drain left to right
             self.healthBarStart += (self.lifeRateChange / 2)
             self.life += self.lifeRateChange
+            
 
 
 class Equation():
@@ -123,6 +149,7 @@ class EquationList():
         self.max = 3
         self.min = 1
         self.list = []
+        
 
     def addEquation(self):
         i = 0
@@ -135,7 +162,40 @@ class EquationList():
         for x in self.list():
             x.draw()
 
+class Turns():
+    def __init__(self):
+        self.turn = True
+        self.center = Point()
+        self.center.y = SCREEN_HEIGHT - 100
+        self.center.x = SCREEN_WIDTH/2
+        self.time_since_last_turn = 0
+        self.turn_length = 15
+        self.timerText = 0
+    def on_update(self, delta_time: float = 1 / 60):
+        self.time_since_last_turn += delta_time
+        
+        if self.time_since_last_turn >= self.turn_length:
+            if self.turn == True:
+                self.turn = False
+                self.time_since_last_turn = 0
+                self.turn_length = 5
+            else:
+                self.turn = True
+                self.time_since_last_turn = 0
+                self.turn_length = 15
+                
 
+    def draw(self):
+        self.timerText = f"{self.turn_length - self.time_since_last_turn:1f}"
+        arcade.draw_text(self.timerText, self.center.x, self.center.y + 20, arcade.color.WHITE, DEFAULT_FONT_SIZE)
+        if self.turn == True:
+            arcade.draw_text("Player", self.center.x, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)  
+        else:
+            arcade.draw_text("Enemy", self.center.x, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)
+ 
+           
+
+        
 class Menu():
     def __init__(self):
         self.center = Point()
@@ -156,6 +216,10 @@ class Game(arcade.Window):
         self.menu = Menu()
         self.held_keys = set()
         self.equations = EquationList()
+        self.turn = Turns()
+
+       
+        
         #self.equations.addEquation()
 
         # Menu Button
@@ -177,6 +241,7 @@ class Game(arcade.Window):
         self.player.draw()
         self.enemy.draw()
         self.menu.draw()
+        self.turn.draw()
         # Render button
         self.uimanager.draw()
         #self.equations.draw()
@@ -186,6 +251,9 @@ class Game(arcade.Window):
         # Call update_health here for testing/display purposes, will need to it move to appropriate function later.
         self.player.update_life()
         self.enemy.update_life()
+        self.turn.on_update(delta_time)
+        #self.turn.change(10 + time.time())
+        
         #self.check_collisions()
 
     def check_keys(self):
@@ -209,6 +277,9 @@ class Game(arcade.Window):
         #self.held_keys.add(key)
     #def on_key_release(self, key, modifiers):
         #self.held_keys.remove(key)
+
+  
+
 
 
 WINDOW = Game(SCREEN_WIDTH, SCREEN_HEIGHT)
