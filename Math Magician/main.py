@@ -120,14 +120,12 @@ class Enemy():
 class Equation():
    
 
-    def __init__(self, max, min, x, y):
+    def __init__(self, first, second, x, y):
         self.center = Point()
         self.center.y = y
         self.center.x = x
-        self.maxNum = max
-        self.min = min
-        self.firstTerm = 0
-        self.secondTerm = 0
+        self.firstTerm = first
+        self.secondTerm = second
         self.text = f"{self.firstTerm} x {self.secondTerm}"
 
     def set(self):
@@ -166,7 +164,7 @@ class Turns():
                 
 
     def draw(self):
-        self.timerText = f"{self.turn_length - self.time_since_last_turn:1f}"
+        self.timerText = f"{self.turn_length - self.time_since_last_turn:.1f}"
         arcade.draw_text(self.timerText, self.center.x, self.center.y + 20, arcade.color.WHITE, DEFAULT_FONT_SIZE)
         if self.turn == True:
             arcade.draw_text("Player", self.center.x, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)  
@@ -205,11 +203,13 @@ class Game(arcade.Window):
        
         
         #self.equations.addEquation()
-        self.maxEquations = 3
-        self.offset = 0
-        self.max = 3
-        self.min = 1
+        self.maxEquations = MAX_EQUATIONS_START
+        self.offset = OFFSET_START
+        self.max = MAX_TERM_START 
+        self.min = MIN_TERM_START
         self.equation_setup()
+
+
 
         # Menu Button
         self.uimanager = arcade.gui.UIManager()
@@ -220,9 +220,28 @@ class Game(arcade.Window):
             arcade.gui.UIAnchorWidget(
                 anchor_x="center_x",
                 anchor_y="bottom",
-                align_y=150,
+                align_y=50,
                 child=start_button)
         )
+
+
+        input_field = arcade.gui.UIInputText(200, 200, color=arcade.color.WHITE, text_color=arcade.color.WHITE, font_size=24, width=200, text='Enter Answer here')
+        self.uimanager.add(
+            arcade.gui.UIAnchorWidget(
+                anchor_x="center_x",
+                anchor_y="bottom",
+                align_y=250,
+                child=input_field)
+        )
+
+     
+        
+
+        
+        self.input_field = arcade.gui.UIInputText( 200, 200, color=arcade.color.DARK_BLUE_GRAY, font_size=24, width=200, text='Enter Answer here')
+
+
+
 
 
     def on_draw(self):
@@ -235,10 +254,13 @@ class Game(arcade.Window):
         # Render button
         self.uimanager.draw()
 
-        
+     
 
-        for x in self.equation:
-            x.draw()
+
+
+        if self.turn.turn == True:
+            for x in self.equation:
+                x.draw()
        
 
    
@@ -259,11 +281,11 @@ class Game(arcade.Window):
         self.offset = 0
         i = 0
         while i < self.maxEquations:
-            self.offset += 30
-            newEquation = Equation(self.max, self.min, SCREEN_WIDTH/2, (SCREEN_HEIGHT/2 - self.offset))
+            self.offset += OFFSET_INCREMENT
+            newEquation = Equation(random.randint(self.min, self.max), random.randint(self.min, self.max), SCREEN_WIDTH/2, (SCREEN_HEIGHT/2 + 100 - self.offset))
             self.equation.append(newEquation)
             i += 1
-
+        
        
 
     def check_equation(self):
@@ -271,6 +293,10 @@ class Game(arcade.Window):
             self.equation.list = []
             self.equation_setup()
             self.turn.trigger = True
+
+    def update_text(self):
+        print(f"updating the label with input text '{self.input_field.text}'")
+        self.label.text = self.input_field.text
 
     def check_keys(self):
         if arcade.key.LEFT in self.held_keys or arcade.key.A in self.held_keys:
