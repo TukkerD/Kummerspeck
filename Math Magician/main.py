@@ -118,15 +118,7 @@ class Enemy():
 
 
 class Equation():
-    def __init__(self):
-        self.center = Point()
-        self.center.y = SCREEN_HEIGHT/2
-        self.center.x = SCREEN_WIDTH/2
-        self.list = []
-        #Highest number that appears per equation
-        self.maxNum = 3
-        #smallest number that appears in equation.
-        self.min = 1
+   
 
     def __init__(self, max, min, x, y):
         self.center = Point()
@@ -134,33 +126,19 @@ class Equation():
         self.center.x = x
         self.maxNum = max
         self.min = min
+        self.firstTerm = 0
+        self.secondTerm = 0
+        self.text = f"{self.firstTerm} x {self.secondTerm}"
 
+    def set(self):
+        self.firstTerm = random.randint(self.min, self.maxNum)
+        self.secondTerm = random.randint(self.min, self.maxNum)
+        self.text = f"{self.firstTerm} x {self.secondTerm}"
     def draw(self):
-        arcade.draw_text("Equations", self.center.x, self. center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)
+        arcade.draw_text(self.text, self.center.x, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)
 
 
-class EquationList():
-    def __init__(self):
-        self.center = Point()
-        self.center.y = SCREEN_HEIGHT/2
-        self.center.x = SCREEN_WIDTH/2
-        self.maxEquations = 3
-        self.offset = 0
-        self.max = 3
-        self.min = 1
-        self.list = []
-        
 
-    def addEquation(self):
-        i = 0
-        while i < self.maxEquations:
-            self.offset += 30
-            newEquation = Equation(self.max, self.min, (self.center.x - self.offset), self.center.y)
-            self.list.append(newEquation)
-
-    def draw(self):
-        for x in self.list():
-            x.draw()
 
 class Turns():
     def __init__(self):
@@ -171,6 +149,7 @@ class Turns():
         self.time_since_last_turn = 0
         self.turn_length = 15
         self.timerText = 0
+        self.trigger = False
     def on_update(self, delta_time: float = 1 / 60):
         self.time_since_last_turn += delta_time
         
@@ -178,11 +157,12 @@ class Turns():
             if self.turn == True:
                 self.turn = False
                 self.time_since_last_turn = 0
-                self.turn_length = 5
+                self.turn_length = 10
+                self.trigger = False
             else:
                 self.turn = True
                 self.time_since_last_turn = 0
-                self.turn_length = 15
+                self.turn_length = 40
                 
 
     def draw(self):
@@ -215,12 +195,21 @@ class Game(arcade.Window):
         self.enemy = Enemy()
         self.menu = Menu()
         self.held_keys = set()
-        self.equations = EquationList()
         self.turn = Turns()
+        self.trigger = False
+        self.equation = []
 
+
+
+       
        
         
         #self.equations.addEquation()
+        self.maxEquations = 3
+        self.offset = 0
+        self.max = 3
+        self.min = 1
+        self.equation_setup()
 
         # Menu Button
         self.uimanager = arcade.gui.UIManager()
@@ -235,6 +224,7 @@ class Game(arcade.Window):
                 child=start_button)
         )
 
+
     def on_draw(self):
         arcade.start_render()
         arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
@@ -244,7 +234,16 @@ class Game(arcade.Window):
         self.turn.draw()
         # Render button
         self.uimanager.draw()
-        #self.equations.draw()
+
+        
+
+        for x in self.equation:
+            x.draw()
+       
+
+   
+
+    
 
     def update(self, delta_time):
         self.check_keys()
@@ -252,9 +251,26 @@ class Game(arcade.Window):
         self.player.update_life()
         self.enemy.update_life()
         self.turn.on_update(delta_time)
-        #self.turn.change(10 + time.time())
+        
         
         #self.check_collisions()
+
+    def equation_setup(self):
+        self.offset = 0
+        i = 0
+        while i < self.maxEquations:
+            self.offset += 30
+            newEquation = Equation(self.max, self.min, SCREEN_WIDTH/2, (SCREEN_HEIGHT/2 - self.offset))
+            self.equation.append(newEquation)
+            i += 1
+
+       
+
+    def check_equation(self):
+        if self.turn.trigger == False:
+            self.equation.list = []
+            self.equation_setup()
+            self.turn.trigger = True
 
     def check_keys(self):
         if arcade.key.LEFT in self.held_keys or arcade.key.A in self.held_keys:
