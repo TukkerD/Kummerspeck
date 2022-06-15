@@ -118,7 +118,7 @@ class Enemy():
 
 
 class Equation():
-    def __init__(self):
+    ''' def __init__(self):
         self.center = Point()
         self.center.y = SCREEN_HEIGHT/2
         self.center.x = SCREEN_WIDTH/2
@@ -127,6 +127,7 @@ class Equation():
         self.maxNum = 3
         #smallest number that appears in equation.
         self.min = 1
+        '''
 
     def __init__(self, max, min, x, y):
         self.center = Point()
@@ -134,40 +135,58 @@ class Equation():
         self.center.x = x
         self.maxNum = max
         self.min = min
+        # Create the equation to display and get the answer.
+        self.multiplicand = random.randrange(self.min, self.maxNum + 1)
+        self.multiplier = random.randrange(self.min, self.maxNum + 1)
+        self.answer = self.multiplicand * self.multiplier
+        self.display = f"{self.multiplicand} x {self.multiplier}"
 
     def draw(self):
-        arcade.draw_text("Equations", self.center.x, self. center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)
+        arcade.draw_text(self.display, self.center.x + 20, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)
 
 
 class EquationList():
     def __init__(self):
         self.center = Point()
-        self.center.y = SCREEN_HEIGHT/2
-        self.center.x = SCREEN_WIDTH/2
-        self.maxEquations = 3
-        self.offset = 0
+        self.center.y = SCREEN_HEIGHT/1.42 # Moved equations up
+        self.center.x = SCREEN_WIDTH/2.2 # Centered the equations a little more
+        self.maxEquations = 10 # Set to 10 for now.
+        self.offset = 5
         self.max = 3
         self.min = 1
         self.list = []
         
 
     def addEquation(self):
-        i = 0
-        while i < self.maxEquations:
+        if len(self.list) < self.maxEquations:
+            newEquation = Equation(self.max, self.min, self.center.x, self.center.y - self.offset)
             self.offset += 30
-            newEquation = Equation(self.max, self.min, (self.center.x - self.offset), self.center.y)
             self.list.append(newEquation)
 
     def draw(self):
-        for x in self.list():
+        arcade.draw_text("Equations", self.center.x, self.center.y + 30, arcade.color.WHITE, DEFAULT_FONT_SIZE)
+        for x in self.list:
             x.draw()
+    
+    def checkAnswer(self, userInput):
+        # Should check the users input against the equations answer. Currently untested.
+        i = 0
+        for i in self.list:
+            if userInput == i.answer:
+                i += 1
+                # Add the next equation
+                self.addEquation()
+                return True
+            elif userInput != i.answer:
+                return False
+
 
 class Turns():
     def __init__(self):
         self.turn = True
         self.center = Point()
         self.center.y = SCREEN_HEIGHT - 100
-        self.center.x = SCREEN_WIDTH/2
+        self.center.x = SCREEN_WIDTH/2.15 # Seems to center the timer more.
         self.time_since_last_turn = 0
         self.turn_length = 15
         self.timerText = 0
@@ -187,7 +206,7 @@ class Turns():
 
     def draw(self):
         self.timerText = f"{self.turn_length - self.time_since_last_turn:1f}"
-        arcade.draw_text(self.timerText, self.center.x, self.center.y + 20, arcade.color.WHITE, DEFAULT_FONT_SIZE)
+        arcade.draw_text(self.timerText, self.center.x, self.center.y - 30, arcade.color.WHITE, DEFAULT_FONT_SIZE) # Switched the timer to be below player/enemy
         if self.turn == True:
             arcade.draw_text("Player", self.center.x, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)  
         else:
@@ -220,7 +239,7 @@ class Game(arcade.Window):
 
        
         
-        #self.equations.addEquation()
+        self.equations.addEquation()
 
         # Menu Button
         self.uimanager = arcade.gui.UIManager()
@@ -231,7 +250,7 @@ class Game(arcade.Window):
             arcade.gui.UIAnchorWidget(
                 anchor_x="center_x",
                 anchor_y="bottom",
-                align_y=150,
+                align_y=50,
                 child=start_button)
         )
 
@@ -244,7 +263,7 @@ class Game(arcade.Window):
         self.turn.draw()
         # Render button
         self.uimanager.draw()
-        #self.equations.draw()
+        self.equations.draw()
 
     def update(self, delta_time):
         self.check_keys()
@@ -253,12 +272,12 @@ class Game(arcade.Window):
         self.enemy.update_life()
         self.turn.on_update(delta_time)
         #self.turn.change(10 + time.time())
-        
+
         #self.check_collisions()
 
     def check_keys(self):
-        if arcade.key.LEFT in self.held_keys or arcade.key.A in self.held_keys:
-            print("left")
+        if arcade.key.LEFT in self.held_keys or arcade.key.A in self.held_keys: 
+            self.equations.addEquation() # Will need to remove!
 
         if arcade.key.RIGHT in self.held_keys or arcade.key.D in self.held_keys:
             print("left")
@@ -273,10 +292,10 @@ class Game(arcade.Window):
     Added the key press functions for testing functions outside of the update function
     just remove the comment tags and place your function in check_keys
     '''
-    #def on_key_press(self, key, modifiers):
-        #self.held_keys.add(key)
-    #def on_key_release(self, key, modifiers):
-        #self.held_keys.remove(key)
+    def on_key_press(self, key, modifiers):
+        self.held_keys.add(key)
+    def on_key_release(self, key, modifiers):
+        self.held_keys.remove(key)
 
   
 
