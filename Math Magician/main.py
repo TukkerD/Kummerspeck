@@ -284,7 +284,7 @@ class Game(arcade.Window):
 
     def on_draw(self):
         arcade.start_render()
-        arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
+        arcade.draw_lrwh_rectangle_textured(0, 280, SCREEN_WIDTH + 400, SCREEN_HEIGHT, self.background)
         self.player.draw()
         self.enemy.draw()
         self.menu.draw()
