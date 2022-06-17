@@ -119,9 +119,6 @@ class Enemy():
             
 
 class Equation():
-<<<<<<< HEAD
-   
-=======
     ''' def __init__(self):
         self.center = Point()
         self.center.y = SCREEN_HEIGHT/2
@@ -132,27 +129,11 @@ class Equation():
         #smallest number that appears in equation.
         self.min = 1
         '''
->>>>>>> d37a65340361c7a455a7cc97c90b05a01a083b76
 
-    def __init__(self, first, second, x, y):
+    def __init__(self, max, min, x, y):
         self.center = Point()
         self.center.y = y
         self.center.x = x
-<<<<<<< HEAD
-        self.firstTerm = first
-        self.secondTerm = second
-        self.text = f"{self.firstTerm} x {self.secondTerm}"
-
-    def set(self):
-        self.firstTerm = random.randint(self.min, self.maxNum)
-        self.secondTerm = random.randint(self.min, self.maxNum)
-        self.text = f"{self.firstTerm} x {self.secondTerm}"
-    def draw(self):
-        arcade.draw_text(self.text, self.center.x, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)
-
-
-
-=======
         self.maxNum = max
         self.min = min
         # Create the equation to display and get the answer.
@@ -200,7 +181,6 @@ class EquationList():
                 return False
 
 
->>>>>>> d37a65340361c7a455a7cc97c90b05a01a083b76
 
 class Turns():
     def __init__(self):
@@ -211,11 +191,7 @@ class Turns():
         self.time_since_last_turn = 0
         self.turn_length = 15
         self.timerText = 0
-<<<<<<< HEAD
-        self.trigger = False
-=======
 
->>>>>>> d37a65340361c7a455a7cc97c90b05a01a083b76
     def on_update(self, delta_time: float = 1 / 60):
         self.time_since_last_turn += delta_time
         
@@ -223,25 +199,15 @@ class Turns():
             if self.turn == True:
                 self.turn = False
                 self.time_since_last_turn = 0
-                self.turn_length = 10
-                self.trigger = False
+                self.turn_length = 5
             else:
                 self.turn = True
                 self.time_since_last_turn = 0
-<<<<<<< HEAD
-                self.turn_length = 40
-                
-
-    def draw(self):
-        self.timerText = f"{self.turn_length - self.time_since_last_turn:.1f}"
-        arcade.draw_text(self.timerText, self.center.x, self.center.y + 20, arcade.color.WHITE, DEFAULT_FONT_SIZE)
-=======
                 self.turn_length = 15
 
     def draw(self):
         self.timerText = f"{self.turn_length - self.time_since_last_turn:1f}"
         arcade.draw_text(self.timerText, self.center.x, self.center.y - 30, arcade.color.WHITE, DEFAULT_FONT_SIZE) # Switched the timer to be below player/enemy
->>>>>>> d37a65340361c7a455a7cc97c90b05a01a083b76
         if self.turn == True:
             arcade.draw_text("Player", self.center.x, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)  
         else:
@@ -287,32 +253,12 @@ class Game(arcade.Window):
         self.enemy = Enemy()
         self.menu = Menu()
         self.held_keys = set()
+        self.equations = EquationList()
         self.turn = Turns()
-<<<<<<< HEAD
-        self.trigger = False
-        self.equation = []
-
-
-
-       
-       
-        
-        #self.equations.addEquation()
-        self.maxEquations = MAX_EQUATIONS_START
-        self.offset = OFFSET_START
-        self.max = MAX_TERM_START 
-        self.min = MIN_TERM_START
-        self.equation_setup()
-
-
-
-        # Menu Button
-=======
         self.pause = PauseView(arcade.View)
         self.input = Input()
 
         # Creating a UI MANAGER to handle the UI
->>>>>>> d37a65340361c7a455a7cc97c90b05a01a083b76
         self.uimanager = arcade.gui.UIManager()
         self.uimanager.enable()
 
@@ -328,35 +274,13 @@ class Game(arcade.Window):
             arcade.gui.UIAnchorWidget(
                 anchor_x="center_x",
                 anchor_y="bottom",
-                align_y=50,
+                align_y=150,
                 child=start_button)
         )
 
-<<<<<<< HEAD
-
-        input_field = arcade.gui.UIInputText(200, 200, color=arcade.color.WHITE, text_color=arcade.color.WHITE, font_size=24, width=200, text='Enter Answer here')
-        self.uimanager.add(
-            arcade.gui.UIAnchorWidget(
-                anchor_x="center_x",
-                anchor_y="bottom",
-                align_y=250,
-                child=input_field)
-        )
-
-     
-        
-
-        
-        self.input_field = arcade.gui.UIInputText( 200, 200, color=arcade.color.DARK_BLUE_GRAY, font_size=24, width=200, text='Enter Answer here')
-
-
-
-
-=======
     def on_buttonclick(self, event):
         print("Why wont the freaking pause menu show up")
         self.pause.on_draw()
->>>>>>> d37a65340361c7a455a7cc97c90b05a01a083b76
 
     def on_draw(self):
         arcade.start_render()
@@ -369,22 +293,6 @@ class Game(arcade.Window):
         self.input.draw()
 
         self.uimanager.draw()
-<<<<<<< HEAD
-
-     
-
-
-
-        if self.turn.turn == True:
-            for x in self.equation:
-                x.draw()
-       
-
-   
-
-    
-=======
->>>>>>> d37a65340361c7a455a7cc97c90b05a01a083b76
 
     def update(self, delta_time):
         self.check_keys()
@@ -392,35 +300,9 @@ class Game(arcade.Window):
         self.player.update_life()
         self.enemy.update_life()
         self.turn.on_update(delta_time)
-<<<<<<< HEAD
-        
-        
-=======
         #self.turn.change(10 + time.time())
 
->>>>>>> d37a65340361c7a455a7cc97c90b05a01a083b76
         #self.check_collisions()
-
-    def equation_setup(self):
-        self.offset = 0
-        i = 0
-        while i < self.maxEquations:
-            self.offset += OFFSET_INCREMENT
-            newEquation = Equation(random.randint(self.min, self.max), random.randint(self.min, self.max), SCREEN_WIDTH/2, (SCREEN_HEIGHT/2 + 100 - self.offset))
-            self.equation.append(newEquation)
-            i += 1
-        
-       
-
-    def check_equation(self):
-        if self.turn.trigger == False:
-            self.equation.list = []
-            self.equation_setup()
-            self.turn.trigger = True
-
-    def update_text(self):
-        print(f"updating the label with input text '{self.input_field.text}'")
-        self.label.text = self.input_field.text
 
     def check_keys(self):
         if arcade.key.LEFT in self.held_keys or arcade.key.A in self.held_keys: 
