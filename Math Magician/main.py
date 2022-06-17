@@ -1,4 +1,6 @@
 import random
+from datetime import time
+
 import arcade
 import schedule
 from sympy import false, true
@@ -36,7 +38,6 @@ class Player():
         self.damage = 10
         # Change the rate that health is lost
         self.lifeRateChange = 0
-       
 
     def draw(self):
         # Wizard
@@ -44,15 +45,16 @@ class Player():
         # Health bars
         arcade.draw_rectangle_filled(self.center.x, self.center.y + 200, self.lifeMax, 15, arcade.color.RED)
         arcade.draw_rectangle_filled(self.healthBarStart, self.center.y + 200, self.life, 15, arcade.color.GREEN)
+
     def attack(self):
         return self.damage
+
     def hurt(self, incomingDamage):
         timeEnd = time.time() + .25
 
         while time.time() < timeEnd:
             self.lifeRateChange = incomingDamage
         self.lifeRateChange = 0
-
 
     def advance(self):
         self.center.y += 0
@@ -84,7 +86,6 @@ class Enemy():
         self.life = 150
         self.damage = 5
         # Change the rate that health is lost
-        
 
     def draw(self):
         arcade.draw_texture_rectangle(self.center.x, self.center.y, self.texture.width, self.texture.height, self.texture, self.angle, 255)
@@ -98,6 +99,7 @@ class Enemy():
 
     def attack(self):
         return self.damage
+
     def hurt(self, incomingDamage):
         timeEnd = time.time() + .25
 
@@ -116,14 +118,27 @@ class Enemy():
             self.life += self.lifeRateChange
             
 
-
 class Equation():
+<<<<<<< HEAD
    
+=======
+    ''' def __init__(self):
+        self.center = Point()
+        self.center.y = SCREEN_HEIGHT/2
+        self.center.x = SCREEN_WIDTH/2
+        self.list = []
+        #Highest number that appears per equation
+        self.maxNum = 3
+        #smallest number that appears in equation.
+        self.min = 1
+        '''
+>>>>>>> d37a65340361c7a455a7cc97c90b05a01a083b76
 
     def __init__(self, first, second, x, y):
         self.center = Point()
         self.center.y = y
         self.center.x = x
+<<<<<<< HEAD
         self.firstTerm = first
         self.secondTerm = second
         self.text = f"{self.firstTerm} x {self.secondTerm}"
@@ -137,17 +152,70 @@ class Equation():
 
 
 
+=======
+        self.maxNum = max
+        self.min = min
+        # Create the equation to display and get the answer.
+        self.multiplicand = random.randrange(self.min, self.maxNum + 1)
+        self.multiplier = random.randrange(self.min, self.maxNum + 1)
+        self.answer = self.multiplicand * self.multiplier
+        self.display = f"{self.multiplicand} x {self.multiplier}"
+
+    def draw(self):
+        arcade.draw_text(self.display, self.center.x + 20, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)
+
+
+class EquationList():
+    def __init__(self):
+        self.center = Point()
+        self.center.y = SCREEN_HEIGHT/1.42 # Moved equations up
+        self.center.x = SCREEN_WIDTH/2.2 # Centered the equations a little more
+        self.maxEquations = 10 # Set to 10 for now.
+        self.offset = 5
+        self.max = 3
+        self.min = 1
+        self.list = []
+
+    def addEquation(self):
+        if len(self.list) < self.maxEquations:
+            newEquation = Equation(self.max, self.min, self.center.x, self.center.y - self.offset)
+            self.offset += 30
+            self.list.append(newEquation)
+
+    def draw(self):
+        arcade.draw_text("Equations", self.center.x, self.center.y + 30, arcade.color.WHITE, DEFAULT_FONT_SIZE)
+        for x in self.list:
+            x.draw()
+    
+    def checkAnswer(self, userInput):
+        # Should check the users input against the equations answer. Currently untested.
+        i = 0
+        for i in self.list:
+            if userInput == i.answer:
+                i += 1
+                # Add the next equation
+                self.addEquation()
+                return True
+            elif userInput != i.answer:
+                return False
+
+
+>>>>>>> d37a65340361c7a455a7cc97c90b05a01a083b76
 
 class Turns():
     def __init__(self):
         self.turn = True
         self.center = Point()
         self.center.y = SCREEN_HEIGHT - 100
-        self.center.x = SCREEN_WIDTH/2
+        self.center.x = SCREEN_WIDTH/2.15 # Seems to center the timer more.
         self.time_since_last_turn = 0
         self.turn_length = 15
         self.timerText = 0
+<<<<<<< HEAD
         self.trigger = False
+=======
+
+>>>>>>> d37a65340361c7a455a7cc97c90b05a01a083b76
     def on_update(self, delta_time: float = 1 / 60):
         self.time_since_last_turn += delta_time
         
@@ -160,20 +228,26 @@ class Turns():
             else:
                 self.turn = True
                 self.time_since_last_turn = 0
+<<<<<<< HEAD
                 self.turn_length = 40
                 
 
     def draw(self):
         self.timerText = f"{self.turn_length - self.time_since_last_turn:.1f}"
         arcade.draw_text(self.timerText, self.center.x, self.center.y + 20, arcade.color.WHITE, DEFAULT_FONT_SIZE)
+=======
+                self.turn_length = 15
+
+    def draw(self):
+        self.timerText = f"{self.turn_length - self.time_since_last_turn:1f}"
+        arcade.draw_text(self.timerText, self.center.x, self.center.y - 30, arcade.color.WHITE, DEFAULT_FONT_SIZE) # Switched the timer to be below player/enemy
+>>>>>>> d37a65340361c7a455a7cc97c90b05a01a083b76
         if self.turn == True:
             arcade.draw_text("Player", self.center.x, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)  
         else:
             arcade.draw_text("Enemy", self.center.x, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)
  
-           
 
-        
 class Menu():
     def __init__(self):
         self.center = Point()
@@ -185,6 +259,26 @@ class Menu():
         #arcade.draw_text("menu", self.center.x, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)
 
 
+
+class Input():
+    def __init__(self):
+        self.uimanager = arcade.gui.UIManager()
+        self.uimanager.enable()
+        inputmanager = arcade.gui.UIInputText(500, 200, 100, 100, "INPUT")
+        self.uimanager.add(
+            arcade.gui.UIAnchorWidget(
+            anchor_x="center_x",
+            anchor_y="bottom",
+            align_y=150,
+            child=inputmanager)
+        )
+
+    def draw(self):
+        arcade.draw_rectangle_filled(520, 300, 200, 50, arcade.color.WHITE)
+        self.uimanager.draw()
+
+
+
 class Game(arcade.Window):
     def __init__(self, width, height):
         super().__init__(width, height)
@@ -194,6 +288,7 @@ class Game(arcade.Window):
         self.menu = Menu()
         self.held_keys = set()
         self.turn = Turns()
+<<<<<<< HEAD
         self.trigger = False
         self.equation = []
 
@@ -212,10 +307,23 @@ class Game(arcade.Window):
 
 
         # Menu Button
+=======
+        self.pause = PauseView(arcade.View)
+        self.input = Input()
+
+        # Creating a UI MANAGER to handle the UI
+>>>>>>> d37a65340361c7a455a7cc97c90b05a01a083b76
         self.uimanager = arcade.gui.UIManager()
         self.uimanager.enable()
+
+        # Creating Button using UIFlatButton
         start_button = arcade.gui.UIFlatButton(text="Menu",
                                                width=200)
+
+        # Assigning our on_buttonclick() function
+        start_button.on_click = self.on_buttonclick
+
+        # Adding button in our uimanager
         self.uimanager.add(
             arcade.gui.UIAnchorWidget(
                 anchor_x="center_x",
@@ -224,6 +332,7 @@ class Game(arcade.Window):
                 child=start_button)
         )
 
+<<<<<<< HEAD
 
         input_field = arcade.gui.UIInputText(200, 200, color=arcade.color.WHITE, text_color=arcade.color.WHITE, font_size=24, width=200, text='Enter Answer here')
         self.uimanager.add(
@@ -243,6 +352,11 @@ class Game(arcade.Window):
 
 
 
+=======
+    def on_buttonclick(self, event):
+        print("Why wont the freaking pause menu show up")
+        self.pause.on_draw()
+>>>>>>> d37a65340361c7a455a7cc97c90b05a01a083b76
 
     def on_draw(self):
         arcade.start_render()
@@ -251,8 +365,11 @@ class Game(arcade.Window):
         self.enemy.draw()
         self.menu.draw()
         self.turn.draw()
-        # Render button
+        self.equations.draw()
+        self.input.draw()
+
         self.uimanager.draw()
+<<<<<<< HEAD
 
      
 
@@ -266,6 +383,8 @@ class Game(arcade.Window):
    
 
     
+=======
+>>>>>>> d37a65340361c7a455a7cc97c90b05a01a083b76
 
     def update(self, delta_time):
         self.check_keys()
@@ -273,8 +392,13 @@ class Game(arcade.Window):
         self.player.update_life()
         self.enemy.update_life()
         self.turn.on_update(delta_time)
+<<<<<<< HEAD
         
         
+=======
+        #self.turn.change(10 + time.time())
+
+>>>>>>> d37a65340361c7a455a7cc97c90b05a01a083b76
         #self.check_collisions()
 
     def equation_setup(self):
@@ -299,8 +423,8 @@ class Game(arcade.Window):
         self.label.text = self.input_field.text
 
     def check_keys(self):
-        if arcade.key.LEFT in self.held_keys or arcade.key.A in self.held_keys:
-            print("left")
+        if arcade.key.LEFT in self.held_keys or arcade.key.A in self.held_keys: 
+            self.equations.addEquation() # Will need to remove!
 
         if arcade.key.RIGHT in self.held_keys or arcade.key.D in self.held_keys:
             print("left")
@@ -315,13 +439,41 @@ class Game(arcade.Window):
     Added the key press functions for testing functions outside of the update function
     just remove the comment tags and place your function in check_keys
     '''
-    #def on_key_press(self, key, modifiers):
-        #self.held_keys.add(key)
-    #def on_key_release(self, key, modifiers):
-        #self.held_keys.remove(key)
+    def on_key_press(self, key, modifiers):
+        self.held_keys.add(key)
+    def on_key_release(self, key, modifiers):
+        self.held_keys.remove(key)
 
-  
 
+class PauseView(arcade.View):
+    def __init__(self, game_view):
+        super().__init__()
+        self.game_view = game_view
+
+    def on_show_view(self):
+        arcade.set_background_color(arcade.color.ORANGE)
+
+    def on_draw(self):
+        self.clear()
+        arcade.draw_lrtb_rectangle_filled(0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_HEIGHT - SCREEN_HEIGHT,
+                                          color=arcade.color.ORANGE)
+
+        arcade.draw_text("PAUSED", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 50,
+                         arcade.color.BLACK, font_size=50, anchor_x="center")
+
+        # Show tip to return or reset
+        arcade.draw_text("Press Esc. to return",
+                         SCREEN_WIDTH / 2,
+                         SCREEN_HEIGHT / 2,
+                         arcade.color.BLACK,
+                         font_size=20,
+                         anchor_x="center")
+        arcade.draw_text("Press Enter to reset",
+                         SCREEN_WIDTH / 2,
+                         SCREEN_HEIGHT / 2 - 30,
+                         arcade.color.BLACK,
+                         font_size=20,
+                         anchor_x="center")
 
 
 WINDOW = Game(SCREEN_WIDTH, SCREEN_HEIGHT)
