@@ -6,11 +6,13 @@ Team Kummerspeck for CSE310
 
 # Development Environment
 
-I used IntelliJ IDEA as my IDE to code Kotlin.
+Python
+Visual Studio Code
+Arcade
 
 
 # Future Work
 
-* Ability to convert other currencies to USD.
-* Show the items in a window vs the console
+* Input
+* Get equations to show up again
 * Add a menu and buttons
