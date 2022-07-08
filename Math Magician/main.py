@@ -279,8 +279,9 @@ class Game(arcade.Window):
         )
 
     def on_buttonclick(self, event):
-        print("Why wont the freaking pause menu show up")
-        self.pause.on_draw()
+        print("Hooray! The freaking pause menu shows up, and it will pause too!")
+        if self.pause.isPaused == False:
+            self.pause.isPaused = True
 
     def on_draw(self):
         arcade.start_render()
@@ -293,13 +294,16 @@ class Game(arcade.Window):
         self.input.draw()
 
         self.uimanager.draw()
+        if self.pause.isPaused == True:
+            self.pause.on_draw()
 
     def update(self, delta_time):
         self.check_keys()
         # Call update_health here for testing/display purposes, will need to it move to appropriate function later.
         self.player.update_life()
         self.enemy.update_life()
-        self.turn.on_update(delta_time)
+        if self.pause.isPaused == False:
+            self.turn.on_update(delta_time)
         #self.turn.change(10 + time.time())
 
         #self.check_collisions()
@@ -308,11 +312,18 @@ class Game(arcade.Window):
         if arcade.key.LEFT in self.held_keys or arcade.key.A in self.held_keys: 
             self.equations.addEquation() # Will need to remove!
 
-        if arcade.key.RIGHT in self.held_keys or arcade.key.D in self.held_keys:
-            print("left")
+        if arcade.key.ESCAPE in self.held_keys:
+            if self.pause.isPaused == True:
+                self.pause.isPaused = False
+                print("Es-caup-eh")
 
-        if arcade.key.UP in self.held_keys or arcade.key.W in self.held_keys:
-            print("left")
+        if arcade.key.ENTER in self.held_keys:
+            
+            if self.pause.isPaused == True:
+                self.turn.time_since_last_turn = 0
+                self.turn.turn_length = 15
+                self.turn.turn = True
+                print("Enter was pressed")
 
         if arcade.key.DOWN in self.held_keys or arcade.key.S in self.held_keys:
             print("left")
@@ -331,12 +342,12 @@ class PauseView(arcade.View):
     def __init__(self, game_view):
         super().__init__()
         self.game_view = game_view
+        self.isPaused = False
 
     def on_show_view(self):
         arcade.set_background_color(arcade.color.ORANGE)
 
     def on_draw(self):
-        self.clear()
         arcade.draw_lrtb_rectangle_filled(0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_HEIGHT - SCREEN_HEIGHT,
                                           color=arcade.color.ORANGE)
 
@@ -356,6 +367,7 @@ class PauseView(arcade.View):
                          arcade.color.BLACK,
                          font_size=20,
                          anchor_x="center")
+
 
 
 WINDOW = Game(SCREEN_WIDTH, SCREEN_HEIGHT)
