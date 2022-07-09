@@ -1,5 +1,6 @@
 import random
 from datetime import time
+from turtle import color
 
 import arcade
 import schedule
@@ -156,12 +157,20 @@ class EquationList():
         self.max = 3
         self.min = 1
         self.list = []
+        self.listPosition = 0
+        self.canAnswer = 0
 
     def addEquation(self):
         if len(self.list) < self.maxEquations:
             newEquation = Equation(self.max, self.min, self.center.x, self.center.y - self.offset)
             self.offset += 30
             self.list.append(newEquation)
+
+    def on_update(self):
+        if self.canAnswer >= 1:
+            self.canAnswer -= 1
+        elif self.canAnswer < 1:
+            self.canAnswer = 0
 
     def draw(self):
         arcade.draw_text("Equations", self.center.x, self.center.y + 30, arcade.color.WHITE, DEFAULT_FONT_SIZE)
@@ -170,17 +179,22 @@ class EquationList():
     
     def checkAnswer(self, userInput):
         # Should check the users input against the equations answer. Currently untested.
-        i = 0
-        for i in self.list:
-            if userInput == i.answer:
-                i += 1
+        try:
+            userInputNum = int(userInput)
+        except:
+            print("That's not a number")
+        else: 
+            print(len(self.list))
+            if userInputNum == self.list[self.listPosition].answer:
                 # Add the next equation
                 self.addEquation()
-                return True
-            elif userInput != i.answer:
-                return False
+                print("Correct")
 
-
+            elif userInputNum != self.list[self.listPosition].answer:
+                self.listPosition -= 1
+                print("Incorrect")
+            if self.listPosition < len(self.list):
+                self.listPosition += 1
 
 class Turns():
     def __init__(self):
@@ -213,7 +227,6 @@ class Turns():
         else:
             arcade.draw_text("Enemy", self.center.x, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)
  
-
 class Menu():
     def __init__(self):
         self.center = Point()
@@ -224,26 +237,13 @@ class Menu():
         arcade.draw_rectangle_filled(self.center.x, self.center.y, SCREEN_WIDTH, 250, arcade.color.BLACK)
         #arcade.draw_text("menu", self.center.x, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)
 
-
-
 class Input():
     def __init__(self):
         self.uimanager = arcade.gui.UIManager()
         self.uimanager.enable()
-        inputmanager = arcade.gui.UIInputText(500, 200, 100, 100, "INPUT")
-        self.uimanager.add(
-            arcade.gui.UIAnchorWidget(
-            anchor_x="center_x",
-            anchor_y="bottom",
-            align_y=150,
-            child=inputmanager)
-        )
 
     def draw(self):
-        arcade.draw_rectangle_filled(520, 300, 200, 50, arcade.color.WHITE)
-        self.uimanager.draw()
-
-
+        arcade.draw_rectangle_filled(SCREEN_WIDTH/2, 240, 125, 50, arcade.color.WHITE)
 
 class Game(arcade.Window):
     def __init__(self, width, height):
@@ -256,7 +256,8 @@ class Game(arcade.Window):
         self.equations = EquationList()
         self.turn = Turns()
         self.pause = PauseView(arcade.View)
-        self.input = Input()
+        # Set up the first equation
+        self.equations.addEquation()
 
         # Creating a UI MANAGER to handle the UI
         self.uimanager = arcade.gui.UIManager()
@@ -265,6 +266,8 @@ class Game(arcade.Window):
         # Creating Button using UIFlatButton
         start_button = arcade.gui.UIFlatButton(text="Menu",
                                                width=200)
+        # For the user input
+        self.inputmanager = arcade.gui.UIInputText(SCREEN_WIDTH/2-25, 225, 50, 20, "INPUT", text_color=arcade.color.BLACK)
 
         # Assigning our on_buttonclick() function
         start_button.on_click = self.on_buttonclick
@@ -277,7 +280,14 @@ class Game(arcade.Window):
                 align_y=150,
                 child=start_button)
         )
-
+        # Input
+        self.uimanager.add(
+            self.inputmanager.with_space_around(
+                left=5, 
+                right=2,
+                bg_color=arcade.color.WHITE)
+        )
+            
     def on_buttonclick(self, event):
         print("Hooray! The freaking pause menu shows up, and it will pause too!")
         if self.pause.isPaused == False:
@@ -291,7 +301,6 @@ class Game(arcade.Window):
         self.menu.draw()
         self.turn.draw()
         self.equations.draw()
-        self.input.draw()
 
         self.uimanager.draw()
         if self.pause.isPaused == True:
@@ -302,6 +311,7 @@ class Game(arcade.Window):
         # Call update_health here for testing/display purposes, will need to it move to appropriate function later.
         self.player.update_life()
         self.enemy.update_life()
+        self.equations.on_update()
         if self.pause.isPaused == False:
             self.turn.on_update(delta_time)
         #self.turn.change(10 + time.time())
@@ -310,7 +320,7 @@ class Game(arcade.Window):
 
     def check_keys(self):
         if arcade.key.LEFT in self.held_keys or arcade.key.A in self.held_keys: 
-            self.equations.addEquation() # Will need to remove!
+            self.equations.checkAnswer(self.inputmanager.text)
 
         if arcade.key.ESCAPE in self.held_keys:
             if self.pause.isPaused == True:
@@ -318,12 +328,16 @@ class Game(arcade.Window):
                 print("Es-caup-eh")
 
         if arcade.key.ENTER in self.held_keys:
-            
             if self.pause.isPaused == True:
                 self.turn.time_since_last_turn = 0
                 self.turn.turn_length = 15
                 self.turn.turn = True
                 print("Enter was pressed")
+            if self.equations.canAnswer == 0 and self.turn.turn == True:
+                #print(self.equations.list[0].answer)
+                self.equations.checkAnswer(self.inputmanager.text)
+                self.equations.canAnswer = 5
+                self.inputmanager.text = ''
 
         if arcade.key.DOWN in self.held_keys or arcade.key.S in self.held_keys:
             print("left")
