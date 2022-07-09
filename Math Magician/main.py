@@ -102,11 +102,12 @@ class Enemy():
         return self.damage
 
     def hurt(self, incomingDamage):
-        timeEnd = time.time() + .25
+        #timeEnd = time.time() + .25
 
-        while time.time() < timeEnd:
-            self.lifeRateChange = incomingDamage
-        self.lifeRateChange = 0
+        #while time.time() < timeEnd:
+            #self.lifeRateChange = incomingDamage
+        #self.lifeRateChange = 0
+        self.life -= self.damage
 
     def update_life(self):
         # Stop the health bar at 0 to avoid it going into the negative integers.
@@ -189,9 +190,11 @@ class EquationList():
                 # Add the next equation
                 self.addEquation()
                 print("Correct")
+                return int(userInputNum)
             elif userInputNum != self.list[self.listPosition].answer:
                 self.listPosition -= 1
                 print("Incorrect")
+                return 0
             if self.listPosition < len(self.list):
                 self.listPosition += 1
 
@@ -318,7 +321,8 @@ class Game(arcade.Window):
                 self.turn.turn = True
                 print("Enter was pressed")
             if self.equations.canAnswer == 0 and self.turn.turn == True:
-                self.equations.checkAnswer(self.inputmanager.text)
+                x = self.equations.checkAnswer(self.inputmanager.text)
+                self.enemy.hurt(x)
                 self.equations.canAnswer = 5
                 self.inputmanager.text = ''
 
