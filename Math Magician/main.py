@@ -178,7 +178,7 @@ class EquationList():
             x.draw()
     
     def checkAnswer(self, userInput):
-        # Should check the users input against the equations answer. Currently untested.
+        # Should check the users input against the equations answer.
         try:
             userInputNum = int(userInput)
         except:
@@ -189,7 +189,6 @@ class EquationList():
                 # Add the next equation
                 self.addEquation()
                 print("Correct")
-
             elif userInputNum != self.list[self.listPosition].answer:
                 self.listPosition -= 1
                 print("Incorrect")
@@ -235,15 +234,6 @@ class Menu():
 
     def draw(self):
         arcade.draw_rectangle_filled(self.center.x, self.center.y, SCREEN_WIDTH, 250, arcade.color.BLACK)
-        #arcade.draw_text("menu", self.center.x, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)
-
-class Input():
-    def __init__(self):
-        self.uimanager = arcade.gui.UIManager()
-        self.uimanager.enable()
-
-    def draw(self):
-        arcade.draw_rectangle_filled(SCREEN_WIDTH/2, 240, 125, 50, arcade.color.WHITE)
 
 class Game(arcade.Window):
     def __init__(self, width, height):
@@ -314,14 +304,8 @@ class Game(arcade.Window):
         self.equations.on_update()
         if self.pause.isPaused == False:
             self.turn.on_update(delta_time)
-        #self.turn.change(10 + time.time())
-
-        #self.check_collisions()
 
     def check_keys(self):
-        if arcade.key.LEFT in self.held_keys or arcade.key.A in self.held_keys: 
-            self.equations.checkAnswer(self.inputmanager.text)
-
         if arcade.key.ESCAPE in self.held_keys:
             if self.pause.isPaused == True:
                 self.pause.isPaused = False
@@ -334,13 +318,9 @@ class Game(arcade.Window):
                 self.turn.turn = True
                 print("Enter was pressed")
             if self.equations.canAnswer == 0 and self.turn.turn == True:
-                #print(self.equations.list[0].answer)
                 self.equations.checkAnswer(self.inputmanager.text)
                 self.equations.canAnswer = 5
                 self.inputmanager.text = ''
-
-        if arcade.key.DOWN in self.held_keys or arcade.key.S in self.held_keys:
-            print("left")
 
     '''
     Added the key press functions for testing functions outside of the update function
