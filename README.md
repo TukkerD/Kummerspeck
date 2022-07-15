@@ -2,7 +2,7 @@
 Team Kummerspeck for CSE310
 
 # Overview
-
+Timed math game where you face off against a minotaur
 
 # Development Environment
 
@@ -10,10 +10,24 @@ Team Kummerspeck for CSE310
 * Visual Studio Code
 * Arcade
 
+# Collaborators
+
+Canyon Atwood, 
+Carlos Leon, 
+Zachary Thompson, 
+Tukker De Hart, 
+Soren Reber
+Coleman Gentry
+
+# Useful Websites
+
+{Make a list of websites that you found helpful in this project}
+* [Web Site Name](http://url.link.goes.here)
+* [Web Site Name](http://url.link.goes.here)
 
 # Future Work
 
 * <s>Input, get equations to show up again, add a menu</s>  Done!
-* Add buttons
+* <s>Add buttons</s> Done!
 * Need to reduce enemy health on correct answer
 * Enemy needs to be able to reduce player health
