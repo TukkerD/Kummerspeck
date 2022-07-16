@@ -23,26 +23,27 @@ class Point:
         self.y = 0.0
 
 
-class Player():
+class Player:
     def __init__(self):
         super().__init__()
 
         self.center = Point()
         self.center.y = SCREEN_HEIGHT / 2
-        self.center.x = SCREEN_WIDTH/8
+        self.center.x = SCREEN_WIDTH / 8
         self.angle = 0
         self.image = WIZARD
         self.texture = arcade.load_texture(self.image)
-        self.healthBarStart = SCREEN_WIDTH/8
-        self.lifeMax = 150
-        self.life = 150
+        self.healthBarStart = SCREEN_WIDTH / 8
+        self.lifeMax = 100
+        self.life = 100
         self.damage = 10
         # Change the rate that health is lost
         self.lifeRateChange = 0
 
     def draw(self):
         # Wizard
-        arcade.draw_texture_rectangle(self.center.x, self.center.y, self.texture.width, self.texture.height, self.texture, self.angle, 255)
+        arcade.draw_texture_rectangle(self.center.x, self.center.y, self.texture.width, self.texture.height,
+                                      self.texture, self.angle, 255)
         # Health bars
         arcade.draw_rectangle_filled(self.center.x, self.center.y + 200, self.lifeMax, 15, arcade.color.RED)
         arcade.draw_rectangle_filled(self.healthBarStart, self.center.y + 200, self.life, 15, arcade.color.GREEN)
@@ -67,30 +68,31 @@ class Player():
             self.life = 0
             self.lifeRateChange = 0
         elif self.life > 0:
-            
+
             # += to drain right to left, -= to drain left to right
             self.healthBarStart += (self.lifeRateChange / 2)
             self.life += self.lifeRateChange
 
 
-class Enemy():
+class Enemy:
     def __init__(self):
         super().__init__()
         self.center = Point()
-        self.center.y = SCREEN_HEIGHT/2
+        self.center.y = SCREEN_HEIGHT / 2
         self.center.x = SCREEN_WIDTH - 200
         self.angle = 0
         self.image = MINOTAUR
         self.texture = arcade.load_texture(self.image)
         self.healthBarStart = SCREEN_WIDTH - 200
-        self.lifeMax = 150
-        self.life = 150
-        self.damage = 5
+        self.lifeMax = 100
+        self.life = 100
+        self.damage = 20
         # Change the rate that health is lost
 
     def draw(self):
-        arcade.draw_texture_rectangle(self.center.x, self.center.y, self.texture.width, self.texture.height, self.texture, self.angle, 255)
-        #Health Bars
+        arcade.draw_texture_rectangle(self.center.x, self.center.y, self.texture.width, self.texture.height,
+                                      self.texture, self.angle, 255)
+        # Health Bars
         arcade.draw_rectangle_filled(self.center.x, self.center.y + 200, self.lifeMax, 15, arcade.color.RED)
         arcade.draw_rectangle_filled(self.healthBarStart, self.center.y + 200, self.life, 15, arcade.color.GREEN)
 
@@ -102,11 +104,11 @@ class Enemy():
         return self.damage
 
     def hurt(self, incomingDamage):
-        #timeEnd = time.time() + .25
+        # timeEnd = time.time() + .25
 
-        #while time.time() < timeEnd:
-            #self.lifeRateChange = incomingDamage
-        #self.lifeRateChange = 0
+        # while time.time() < timeEnd:
+        # self.lifeRateChange = incomingDamage
+        # self.lifeRateChange = 0
         self.life -= self.damage
 
     def update_life(self):
@@ -114,13 +116,13 @@ class Enemy():
         if self.life <= 0:
             self.life = 0
             self.lifeRateChange = 0
-        #elif self.life > 0:
+            # elif self.life > 0:
             # += to drain right to left, -= to drain left to right
             self.healthBarStart += (self.lifeRateChange / 2)
             self.life += self.lifeRateChange
-            
 
-class Equation():
+
+class Equation:
     ''' def __init__(self):
         self.center = Point()
         self.center.y = SCREEN_HEIGHT/2
@@ -148,12 +150,12 @@ class Equation():
         arcade.draw_text(self.display, self.center.x + 20, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)
 
 
-class EquationList():
+class EquationList:
     def __init__(self):
         self.center = Point()
-        self.center.y = SCREEN_HEIGHT/1.42 # Moved equations up
-        self.center.x = SCREEN_WIDTH/2.2 # Centered the equations a little more
-        self.maxEquations = 10 # Set to 10 for now.
+        self.center.y = SCREEN_HEIGHT / 1.42  # Moved equations up
+        self.center.x = SCREEN_WIDTH / 2.2  # Centered the equations a little more
+        self.maxEquations = 10  # Set to 10 for now.
         self.offset = 5
         self.max = 3
         self.min = 1
@@ -177,14 +179,14 @@ class EquationList():
         arcade.draw_text("Equations", self.center.x, self.center.y + 30, arcade.color.WHITE, DEFAULT_FONT_SIZE)
         for x in self.list:
             x.draw()
-    
+
     def checkAnswer(self, userInput):
         # Should check the users input against the equations answer.
         try:
             userInputNum = int(userInput)
         except:
             print("That's not a number")
-        else: 
+        else:
             print(len(self.list))
             if userInputNum == self.list[self.listPosition].answer:
                 # Add the next equation
@@ -198,19 +200,20 @@ class EquationList():
             if self.listPosition < len(self.list):
                 self.listPosition += 1
 
-class Turns():
+
+class Turns:
     def __init__(self):
         self.turn = True
         self.center = Point()
         self.center.y = SCREEN_HEIGHT - 100
-        self.center.x = SCREEN_WIDTH/2.15 # Seems to center the timer more.
+        self.center.x = SCREEN_WIDTH / 2.15  # Seems to center the timer more.
         self.time_since_last_turn = 0
         self.turn_length = 15
         self.timerText = 0
 
     def on_update(self, delta_time: float = 1 / 60):
         self.time_since_last_turn += delta_time
-        
+
         if self.time_since_last_turn >= self.turn_length:
             if self.turn == True:
                 self.turn = False
@@ -223,20 +226,23 @@ class Turns():
 
     def draw(self):
         self.timerText = f"{self.turn_length - self.time_since_last_turn:1f}"
-        arcade.draw_text(self.timerText, self.center.x, self.center.y - 30, arcade.color.WHITE, DEFAULT_FONT_SIZE) # Switched the timer to be below player/enemy
+        arcade.draw_text(self.timerText, self.center.x, self.center.y - 30, arcade.color.WHITE,
+                         DEFAULT_FONT_SIZE)  # Switched the timer to be below player/enemy
         if self.turn == True:
-            arcade.draw_text("Player", self.center.x, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)  
+            arcade.draw_text("Player", self.center.x, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)
         else:
             arcade.draw_text("Enemy", self.center.x, self.center.y, arcade.color.WHITE, DEFAULT_FONT_SIZE)
- 
-class Menu():
+
+
+class Menu:
     def __init__(self):
         self.center = Point()
         self.center.y = 125
-        self.center.x = SCREEN_WIDTH/2
+        self.center.x = SCREEN_WIDTH / 2
 
     def draw(self):
         arcade.draw_rectangle_filled(self.center.x, self.center.y, SCREEN_WIDTH, 250, arcade.color.BLACK)
+
 
 class Game(arcade.Window):
     def __init__(self, width, height):
@@ -260,7 +266,8 @@ class Game(arcade.Window):
         start_button = arcade.gui.UIFlatButton(text="Menu",
                                                width=200)
         # For the user input
-        self.inputmanager = arcade.gui.UIInputText(SCREEN_WIDTH/2-25, 225, 50, 20, "INPUT", text_color=arcade.color.BLACK)
+        self.inputmanager = arcade.gui.UIInputText(SCREEN_WIDTH / 2 - 25, 225, 50, 20, "",
+                                                   text_color=arcade.color.BLACK)
 
         # Assigning our on_buttonclick() function
         start_button.on_click = self.on_buttonclick
@@ -273,17 +280,18 @@ class Game(arcade.Window):
                 align_y=150,
                 child=start_button)
         )
-        # Input
+        # Input Bar
         self.uimanager.add(
             self.inputmanager.with_space_around(
-                left=5, 
+                left=5,
                 right=2,
                 bg_color=arcade.color.WHITE)
         )
-            
+        # Input Bar
+
     def on_buttonclick(self, event):
         print("Hooray! The freaking pause menu shows up, and it will pause too!")
-        if self.pause.isPaused == False:
+        if not self.pause.isPaused:
             self.pause.isPaused = True
 
     def on_draw(self):
@@ -296,7 +304,7 @@ class Game(arcade.Window):
         self.equations.draw()
 
         self.uimanager.draw()
-        if self.pause.isPaused == True:
+        if self.pause.isPaused:
             self.pause.on_draw()
 
     def update(self, delta_time):
@@ -305,17 +313,17 @@ class Game(arcade.Window):
         self.player.update_life()
         self.enemy.update_life()
         self.equations.on_update()
-        if self.pause.isPaused == False:
+        if not self.pause.isPaused:
             self.turn.on_update(delta_time)
 
     def check_keys(self):
         if arcade.key.ESCAPE in self.held_keys:
-            if self.pause.isPaused == True:
+            if self.pause.isPaused:
                 self.pause.isPaused = False
                 print("Es-caup-eh")
 
         if arcade.key.ENTER in self.held_keys:
-            if self.pause.isPaused == True:
+            if self.pause.isPaused:
                 self.turn.time_since_last_turn = 0
                 self.turn.turn_length = 15
                 self.turn.turn = True
@@ -330,8 +338,10 @@ class Game(arcade.Window):
     Added the key press functions for testing functions outside of the update function
     just remove the comment tags and place your function in check_keys
     '''
+
     def on_key_press(self, key, modifiers):
         self.held_keys.add(key)
+
     def on_key_release(self, key, modifiers):
         self.held_keys.remove(key)
 
@@ -365,7 +375,6 @@ class PauseView(arcade.View):
                          arcade.color.BLACK,
                          font_size=20,
                          anchor_x="center")
-
 
 
 WINDOW = Game(SCREEN_WIDTH, SCREEN_HEIGHT)
