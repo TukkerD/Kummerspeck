@@ -4,13 +4,15 @@ Team Kummerspeck for CSE310
 # Overview
 Timed math game where you face off against a minotaur
 
+[Project Overview](http://url.link.goes.here)
+
 # Development Environment
 
 * Python
 * Visual Studio Code
 * Arcade
 
-# Collaborators
+# Collaborators (at one point or another)
 
 Canyon Atwood, 
 Carlos Leon, 
@@ -22,8 +24,8 @@ Coleman Gentry
 # Useful Websites
 
 {Make a list of websites that you found helpful in this project}
-* [Web Site Name](http://url.link.goes.here)
-* [Web Site Name](http://url.link.goes.here)
+* [Pthon Arcade Docs](https://api.arcade.academy/en/latest/)
+* [Python Arcade Tutorial](https://api.arcade.academy/en/latest/examples/platform_tutorial/index.html)
 
 # Future Work
 
