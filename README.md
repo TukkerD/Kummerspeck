@@ -4,7 +4,7 @@ Team Kummerspeck for CSE310
 # Overview
 Timed math game where you face off against a minotaur
 
-[Project Overview](http://url.link.goes.here)
+[Project Overview](https://youtu.be/BjHhs27PQP0)
 
 # Development Environment
 
